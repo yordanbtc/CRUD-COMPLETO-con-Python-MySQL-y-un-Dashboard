@@ -279,6 +279,7 @@ def procesar_actualizacion_form(data):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Extraer y procesar datos del formulario
                 nombre_empleado = data.form['nombre_empleado']
                 apellido_empleado = data.form['apellido_empleado']
                 sexo_empleado = data.form['sexo_empleado']
@@ -286,49 +287,41 @@ def procesar_actualizacion_form(data):
                 email_empleado = data.form['email_empleado']
                 profesion_empleado = data.form['profesion_empleado']
 
-                salario_sin_puntos = re.sub(
-                    '[^0-9]+', '', data.form['salario_empleado'])
+                # Procesar salario eliminando caracteres no numéricos
+                salario_sin_puntos = re.sub('[^0-9]+', '', data.form['salario_empleado'])
                 salario_empleado = int(salario_sin_puntos)
                 id_empleado = data.form['id_empleado']
 
-                if data.files['foto_empleado']:
+                # Construir consulta SQL y parámetros dinámicamente
+                query_base = """
+                    UPDATE tbl_empleados
+                    SET 
+                        nombre_empleado = %s,
+                        apellido_empleado = %s,
+                        sexo_empleado = %s,
+                        telefono_empleado = %s,
+                        email_empleado = %s,
+                        profesion_empleado = %s,
+                        salario_empleado = %s
+                """
+                params = [
+                    nombre_empleado, apellido_empleado, sexo_empleado,
+                    telefono_empleado, email_empleado, profesion_empleado, salario_empleado
+                ]
+
+                # Verificar si se subió un archivo de foto
+                if 'foto_empleado' in data.files and data.files['foto_empleado'].filename != '':
                     file = data.files['foto_empleado']
                     fotoForm = procesar_imagen_perfil(file)
+                    query_base += ", foto_empleado = %s"
+                    params.append(fotoForm)
 
-                    querySQL = """
-                        UPDATE tbl_empleados
-                        SET 
-                            nombre_empleado = %s,
-                            apellido_empleado = %s,
-                            sexo_empleado = %s,
-                            telefono_empleado = %s,
-                            email_empleado = %s,
-                            profesion_empleado = %s,
-                            salario_empleado = %s,
-                            foto_empleado = %s
-                        WHERE id_empleado = %s
-                    """
-                    values = (nombre_empleado, apellido_empleado, sexo_empleado,
-                              telefono_empleado, email_empleado, profesion_empleado,
-                              salario_empleado, fotoForm, id_empleado)
-                else:
-                    querySQL = """
-                        UPDATE tbl_empleados
-                        SET 
-                            nombre_empleado = %s,
-                            apellido_empleado = %s,
-                            sexo_empleado = %s,
-                            telefono_empleado = %s,
-                            email_empleado = %s,
-                            profesion_empleado = %s,
-                            salario_empleado = %s
-                        WHERE id_empleado = %s
-                    """
-                    values = (nombre_empleado, apellido_empleado, sexo_empleado,
-                              telefono_empleado, email_empleado, profesion_empleado,
-                              salario_empleado, id_empleado)
+                # Agregar condición WHERE
+                query_base += " WHERE id_empleado = %s"
+                params.append(id_empleado)
 
-                cursor.execute(querySQL, values)
+                # Ejecutar la consulta
+                cursor.execute(query_base, params)
                 conexion_MySQLdb.commit()
 
         return cursor.rowcount or []
