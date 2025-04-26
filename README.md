@@ -74,23 +74,3 @@ Para ejecutar este proyecto, necesitas:
 7. **Accede desde el navegador:**
 
    - Ingresa a: [http://127.0.0.1:5600/](http://127.0.0.1:5600/)
-
----
-
-## Expresiones de Gratitud 🎁
-
-- **Comenta:** Comparte este proyecto con otros desarrolladores 📢.
-- **Invita una cerveza o un café:** 🍺🍵 [Paypal](mailto:iamdeveloper86@gmail.com).
-- **Da crédito:** Agradece en tus redes sociales 😎.
-
-## Notas finales 🖐️
-
-No olvides suscribirte y dejar tus comentarios. Este proyecto es una base que puedes mejorar y personalizar según tus necesidades.
-
-🔹 **Autor:** Urian Viera
-
----
-
-🔗 [Repositorio en GitHub](https://github.com/urian121/CRUD-COMPLETO-con-Python-MySQL-y-un-Dashboard)
-
-🔹 Si encuentras útil este proyecto, ¡dale una estrella en GitHub! 🌟
